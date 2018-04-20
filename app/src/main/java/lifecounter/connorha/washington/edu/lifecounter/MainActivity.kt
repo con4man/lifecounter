@@ -5,17 +5,40 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    private val lifePoints: IntArray = intArrayOf(20, 20, 20, 20)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setClickListeners()
     }
 
-    val lifePoints: IntArray = intArrayOf(20, 20, 20, 20)
+    private fun setClickListeners() {
+        player1Add5.setOnClickListener(this)
+        player1Add1.setOnClickListener(this)
+        player1Sub1.setOnClickListener(this)
+        player1Sub5.setOnClickListener(this)
 
-    fun onClick(v: View) {
-        when (v.id) {
+        player2Add5.setOnClickListener(this)
+        player2Add1.setOnClickListener(this)
+        player2Sub1.setOnClickListener(this)
+        player2Sub5.setOnClickListener(this)
+
+        player3Add5.setOnClickListener(this)
+        player3Add1.setOnClickListener(this)
+        player3Sub1.setOnClickListener(this)
+        player3Sub5.setOnClickListener(this)
+
+        player4Add5.setOnClickListener(this)
+        player4Add1.setOnClickListener(this)
+        player4Sub1.setOnClickListener(this)
+        player4Sub5.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View) {
+        when (view.id) {
             player1Add5.id -> updateLifePoints(1, "addFive")
             player1Add1.id -> updateLifePoints(1, "addOne")
             player1Sub1.id -> updateLifePoints(1, "subOne")
@@ -41,52 +64,60 @@ class MainActivity : AppCompatActivity() {
     private fun updateLifePoints(player: Int, updateType: String) {
         if (!gameIsOver()) {
             when (updateType) {
-                "addFive" -> add5(player)
-                "addOne" -> add1(player)
-                "subOne" -> sub1(player)
-                "subFive" -> sub5(player)
+                "addFive" -> updateLifePointsArray(player, 5)
+                "addOne" -> updateLifePointsArray(player, 1)
+                "subOne" -> updateLifePointsArray(player, -1)
+                "subFive" -> updateLifePointsArray(player, -5)
             }
+        } else {
+            resetCounter()
+            updateAllPlayersLifePoints()
         }
-        updateLifePointDisplay(player)
+        updateLifePointsDisplay(player)
+        if (gameIsOver()) {
+            showLoserDisplay()
+        }
     }
 
-    private fun updateLifePointDisplay(player: Int) {
+    private fun updateLifePointsDisplay(player: Int) {
+        val playerLifePoints = lifePoints[player - 1]
+        val playerDisplayString = "P$player: $playerLifePoints"
         when (player) {
-            1 -> player1Text.text = "Test"
-            2 -> player2Text.text = "P2: $lifePoints[1]"
-            3 -> player3Text.text = "P3: $lifePoints[2]"
-            4 -> player4Text.text = "P4: $lifePoints[3]"
+            1 -> player1Text.text = (playerDisplayString)
+            2 -> player2Text.text = (playerDisplayString)
+            3 -> player3Text.text = (playerDisplayString)
+            4 -> player4Text.text = (playerDisplayString)
         }
     }
 
     private fun gameIsOver() : Boolean {
-        return (lifePoints.contains(0) || lifePoints.contains(-1) || lifePoints.contains(-2) || lifePoints.contains(-3) || lifePoints.contains(-4))
+        return lifePoints.contains(0)
     }
 
-    private fun add5(player :Int) {
-        val playerPositionInArray = player -1
-        val currentLifePoints = lifePoints.get(playerPositionInArray)
-        lifePoints.set(playerPositionInArray, currentLifePoints + 5)
+    private fun updateLifePointsArray(player :Int, changeValue :Int) {
+        lifePoints[player - 1] = lifePoints[player - 1] + changeValue
+        if (lifePoints[player - 1] < 0) {
+            lifePoints[player - 1] = 0
+        }
     }
 
-    private fun add1(player :Int) {
-        val playerPositionInArray = player -1
-        val currentLifePoints = lifePoints.get(playerPositionInArray)
-        lifePoints.set(playerPositionInArray, currentLifePoints + 1)
+    private fun showLoserDisplay() {
+        val losingPlayer = lifePoints.indexOf(0) + 1
+        val losingPlayerString = "Player $losingPlayer LOSES!"
+        losingPlayerText.text = losingPlayerString
     }
 
-    private fun sub1(player :Int) {
-        val playerPositionInArray = player -1
-        val currentLifePoints = lifePoints.get(playerPositionInArray)
-        lifePoints.set(playerPositionInArray, currentLifePoints - 1)
+    private fun resetCounter() {
+        for (i in 0..3) {
+            lifePoints[i] = 20
+        }
+        losingPlayerText.text = ""
     }
 
-    private fun sub5(player :Int) {
-        val playerPositionInArray = player -1
-        val currentLifePoints = lifePoints.get(playerPositionInArray)
-        lifePoints.set(playerPositionInArray, currentLifePoints - 5)
+    private fun updateAllPlayersLifePoints() {
+        for (i in 1..4) {
+            updateLifePointsDisplay(i)
+        }
     }
-
-
 
 }

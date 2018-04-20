@@ -264,8 +264,8 @@
 
     <TextView
         android:id="@+id/losingPlayerText"
-        android:layout_width="289dp"
-        android:layout_height="25dp"
+        android:layout_width="130dp"
+        android:layout_height="21dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
